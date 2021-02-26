@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    {% if error %}
+        <p>Error: {{ error }}</p>
+    {% else %}
+    <p>Average color below</p>
+    <div style="background-color:rgb{{average_color}};width: 300px;height: 300px;"></div>
+    <p>Number of coins: {{number_of_coins}}</p>
+    <p>Width, Height: {{width}}, {{height}}</p>
+    {% endif %}
+</body>
+</html>

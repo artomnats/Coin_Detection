@@ -1,0 +1,5 @@
+<form method="POST" enctype="multipart/form-data" id="inputform" name="form1" class="dropzone">
+   {% csrf_token %}
+    <input type="file" name="file" />
+    <button type="submit" id="add">Save</button>
+</form>
