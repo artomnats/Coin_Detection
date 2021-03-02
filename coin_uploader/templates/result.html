@@ -8,10 +8,14 @@
     {% if error %}
         <p>Error: {{ error }}</p>
     {% else %}
-    <p>Average color below</p>
-    <div style="background-color:rgb{{average_color}};width: 300px;height: 300px;"></div>
-    <p>Number of coins: {{number_of_coins}}</p>
-    <p>Width, Height: {{width}}, {{height}}</p>
+        <p>Width, Height: {{ width }}, {{ height }}</p>
+        <p>Average color below</p>
+        <div style="background-color:rgb{{ average_color }};width: 300px;height: 300px;"></div>
+        <p>Number of coins: {{ number_of_coins }}</p>
+        {% for key, value in coins.items %}
+            <p>Number of {{ key }} ruble coins: {{ value }}</p>
+        {% endfor %}
+        <p>Total sum of coins: {{ total_sum }} rubles</p>
     {% endif %}
 </body>
 </html>

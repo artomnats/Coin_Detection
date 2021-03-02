@@ -60,21 +60,44 @@ class ImageProcessView(TemplateView):
             raise RuntimeError("Failed to parse an image from the file")
         if open_cv_image.ndim != 3:
             raise RuntimeError("Image is not three dimensional, or is not colored image")
+        average_color = open_cv_image.mean(axis=0).mean(axis=0)
         # Convert RGB to BGR
         open_cv_image = open_cv_image[:, :, ::-1].copy()
 
-        grayimg = cv2.cvtColor(open_cv_image, cv2.cv2.COLOR_BGR2GRAY)
+        gray_img = cv2.cvtColor(open_cv_image, cv2.COLOR_BGR2GRAY)
         width, height = img.width, img.height
 
-        blurred = cv2.GaussianBlur(grayimg, (7, 7), 0)
-
-        circles = cv2.HoughCircles(blurred, cv2.HOUGH_GRADIENT, dp=2.2, minDist=100,
-                                   param1=200, param2=100, minRadius=50, maxRadius=120)
-        number_of_circles = circles.size
-        average_color = open_cv_image.mean(axis=0).mean(axis=0)
+        img = cv2.medianBlur(gray_img, 7)
+        circles = cv2.HoughCircles(
+            img, cv2.HOUGH_GRADIENT, 1, 50, param1=100,
+            param2=50, minRadius=10, maxRadius=380,
+        )
+        circles = numpy.round(circles[0, :]).astype("int")
+        coin_count = {
+            1: 0,
+            2: 0,
+            5: 0,
+            10: 0,
+        }
+        if circles is None:
+            circles = []
+        number_of_circles = 0
+        for (x, y, r) in circles:
+            number_of_circles += 1
+            if r < 75:
+                coin_count[1] += 1
+            elif r > 85:
+                coin_count[5] += 1
+            elif r >= 80:
+                coin_count[2] += 1
+            else:
+                coin_count[10] += 1
+        sum_of_coins = sum([i*j for i, j in coin_count.items()])
         result = {
             "number_of_coins": number_of_circles,
             "average_color": tuple(average_color),
+            "coins": coin_count,
+            "total_sum": sum_of_coins,
             "width": width,
             "height": height,
         }
